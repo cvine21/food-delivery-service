@@ -1,7 +1,9 @@
 
 window.addEventListener('DOMContentLoaded', function () {
 
-	// Tabs
+	// ************************************************************************** //
+	//                                   Tabs                                     //
+	// ************************************************************************** //
 
 	let tabs = document.querySelectorAll('.tabheader__item'),
 		tabsContent = document.querySelectorAll('.tabcontent'),
@@ -88,4 +90,49 @@ window.addEventListener('DOMContentLoaded', function () {
 	}
 
 	setClock('.timer', deadline);
+
+	// ************************************************************************** //
+	//                                   Modal                                    //
+	// ************************************************************************** //
+
+	const modal = document.querySelector('.modal'),
+		modalTrigger = document.querySelectorAll('[data-modal]'),
+		modalCloseBtn = document.querySelector('[data-close]');
+
+	/* Открыть модальное окно */
+	modalTrigger.forEach(item => {
+		item.addEventListener('click', () => {
+			modal.classList.add('show');
+			modal.classList.remove('hide');
+			/* Отменить скролл при открытом модальном окне */
+			document.body.style.overflow = 'hidden';
+		});
+	});
+
+	function closeModal() {
+		modal.classList.add('hide');
+		modal.classList.remove('show');
+		/* Вернуть скролл при закрытии модального окна (браузер сам догадается, какое значение подставить в пустую строку) */
+		document.body.style.overflow = '';
+	}
+
+	/* Закрыть модальное окно при нажатии на крестик */
+	modalCloseBtn.addEventListener('click', (e) => {
+		closeModal();
+	});
+
+	/* Закрыть модальное окно при нажатии на пустое пространство вокруг него */
+	modal.addEventListener('click', (e) => {
+		if (e.target === modal) {
+			closeModal();
+		}
+	})
+
+	/* Закрыть модальное окно при нажатии на Escape */
+	document.addEventListener('keydown', (e) => {
+		if (e.code === 'Escape' && modal.classList.contains('show')) {
+			closeModal();
+		}
+	})
+
 });
