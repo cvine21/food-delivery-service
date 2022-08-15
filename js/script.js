@@ -100,22 +100,30 @@ window.addEventListener('DOMContentLoaded', function () {
 		modalCloseBtn = document.querySelector('[data-close]');
 
 	/* Открыть модальное окно */
+	function openModal() {
+		modal.classList.add('show');
+		modal.classList.remove('hide');
+		/* Отменить скролл */
+		document.body.style.overflow = 'hidden';
+		/* Очистить интервал, если окно уже было открыто */
+		clearInterval(modalTimerId);
+	}
+	
+	/* Открыть модальное окно при нажатии на кнопку "Связаться с нами" */
 	modalTrigger.forEach(item => {
 		item.addEventListener('click', () => {
-			modal.classList.add('show');
-			modal.classList.remove('hide');
-			/* Отменить скролл при открытом модальном окне */
-			document.body.style.overflow = 'hidden';
+			openModal();
 		});
-	});
+	}); 
 
+	/* Закрыть модальное окно */
 	function closeModal() {
 		modal.classList.add('hide');
 		modal.classList.remove('show');
-		/* Вернуть скролл при закрытии модального окна (браузер сам догадается, какое значение подставить в пустую строку) */
+		/* Вернуть скролл (браузер сам догадается, какое значение подставить в пустую строку) */
 		document.body.style.overflow = '';
 	}
-
+	
 	/* Закрыть модальное окно при нажатии на крестик */
 	modalCloseBtn.addEventListener('click', (e) => {
 		closeModal();
@@ -133,6 +141,19 @@ window.addEventListener('DOMContentLoaded', function () {
 		if (e.code === 'Escape' && modal.classList.contains('show')) {
 			closeModal();
 		}
-	})
+	});
 
+	/* Открыть модальное окно через заданный временной интервал */
+	const modalTimerId = setTimeout(openModal, 5000);
+
+	/* Открыть модальное окно при пролистывании странии до конца (-1px, потому что без него может не отрабатывать на некоторых браузерах по неизвестным причинам) */
+	function showModalByScroll() {
+		if (window.pageYOffset + document.documentElement.clientHeight >=
+			document.documentElement.scrollHeight - 1) {
+			openModal();
+			window.removeEventListener('scroll', showModalByScroll);
+		}
+	}
+
+	window.addEventListener('scroll', showModalByScroll);
 });
