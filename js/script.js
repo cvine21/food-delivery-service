@@ -1,3 +1,4 @@
+'use strict'
 
 window.addEventListener('DOMContentLoaded', function () {
 
@@ -42,7 +43,9 @@ window.addEventListener('DOMContentLoaded', function () {
 		}
 	});
 
-	// Timer
+	// ************************************************************************** //
+	//                                   Timer                                    //
+	// ************************************************************************** //
 
 	const deadline = '2022-09-06';
 
@@ -108,13 +111,13 @@ window.addEventListener('DOMContentLoaded', function () {
 		/* Очистить интервал, если окно уже было открыто */
 		clearInterval(modalTimerId);
 	}
-	
+
 	/* Открыть модальное окно при нажатии на кнопку "Связаться с нами" */
 	modalTrigger.forEach(item => {
 		item.addEventListener('click', () => {
 			openModal();
 		});
-	}); 
+	});
 
 	/* Закрыть модальное окно */
 	function closeModal() {
@@ -123,7 +126,7 @@ window.addEventListener('DOMContentLoaded', function () {
 		/* Вернуть скролл (браузер сам догадается, какое значение подставить в пустую строку) */
 		document.body.style.overflow = '';
 	}
-	
+
 	/* Закрыть модальное окно при нажатии на крестик */
 	modalCloseBtn.addEventListener('click', (e) => {
 		closeModal();
