@@ -176,6 +176,7 @@ window.addEventListener('DOMContentLoaded', function () {
 			this.changeToRUB();
 		}
 
+		/* USD to RUB */
 		changeToRUB() {
 			this.price *= this.transfer;
 		}
@@ -196,7 +197,6 @@ window.addEventListener('DOMContentLoaded', function () {
 			this.parent.append(element);
 		}
 	}
-
 
 	new MenuCard('img/tabs/vegy.jpg',
 		'vegy',
@@ -220,7 +220,5 @@ window.addEventListener('DOMContentLoaded', function () {
 		'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
 		14,
 		'.menu .container'
-	).render();
+	).render()
 });
-
-
