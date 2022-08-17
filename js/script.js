@@ -229,4 +229,63 @@ window.addEventListener('DOMContentLoaded', function () {
 		'.menu .container',
 		'menu__item'
 	).render()
+
+	// ************************************************************************** //
+	//                                   Form                                     //
+	// ************************************************************************** //
+
+	/*Отправка данных, введнных пользователем в форме*/
+
+	const forms = document.querySelectorAll('form');
+
+	const message = {
+		loading: 'Загрузка',
+		success: 'Спасибо мы с вами свяжемся',
+		failure: 'Что-то пошло не так...'
+	}
+
+	forms.forEach(item => postData(item));
+
+	/* Отправить POST-запрос */
+	function postData(form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+
+			/* Вывести статус отправки формы */
+			const statusMessage = document.createElement('div');
+			statusMessage.classList.add('status');
+			statusMessage.textContent = message.loading;
+			form.append(statusMessage);
+
+			/* 
+			Cоздать запрос, настроить с помощью open, создать заголовок с помощью setRequestHeader.
+			Формат FormData собирает все значения с input, используя атрибут name в качестве ключа
+			*/
+			const request = new XMLHttpRequest();
+			request.open('POST', 'server.php');
+			request.setRequestHeader('Content-type', 'multipart/JSON');
+			const formData = new FormData(form);
+
+			/* Сконвертировать данные из FormData в JSON */
+			const object = {};
+			formData.forEach((value, key) => object[key] = value);
+
+			/* Отправить данные на сервер */
+			request.send(JSON.stringify(object));
+
+			/* Событие-ответ на отправку формы */
+			request.addEventListener('load', () => {
+				if (request.status === 200) {
+					console.log(request.response);
+					statusMessage.textContent = message.success;
+
+					/* Очистить поля ввода и сообщение статуса */
+					form.reset();
+					setTimeout(() => statusMessage.remove(), 2000);
+				} else {
+					statusMessage.textContent = message.failure;
+				}
+			})
+		});
+	}
 });
