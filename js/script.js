@@ -253,35 +253,27 @@ window.addEventListener('DOMContentLoaded', function () {
 				margin: 0 auto;`;
 			form.insertAdjacentElement("afterend", statusMessage);
 
-			/* 
-			Cоздать запрос, настроить с помощью open, создать заголовок с помощью setRequestHeader.
-			Формат FormData собирает все значения с input, используя атрибут name в качестве ключа
-			*/
-			const request = new XMLHttpRequest();
-			request.open('POST', 'server.php');
-			request.setRequestHeader('Content-type', 'multipart/JSON');
+			/* Собрать данные с формы в формате FormData*/
 			const formData = new FormData(form);
 
 			/* Сконвертировать данные из FormData в JSON */
 			const object = {};
 			formData.forEach((value, key) => object[key] = value);
 
-			/* Отправить данные на сервер */
-			request.send(JSON.stringify(object));
-
-			/* Событие-ответ на отправку формы */
-			request.addEventListener('load', () => {
-				if (request.status === 200) {
-					console.log(request.response);
-					showThanksModal(message.success);
-
-					/* Очистить поля ввода и сообщение статуса */
-					form.reset();
-					statusMessage.remove();
-				} else {
-					 showThanksModal(message.failure);
-				}
-			})
+			/*
+			Отправить данные на сервер.
+			Вывести соответвсующее сообщение статуса запроса и очистить форму в любом случае.
+			*/
+			fetch('server.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(object)
+			}).then(data => {
+				console.log(data);
+				showThanksModal(message.success);
+				statusMessage.remove();
+			}).catch(() => showThanksModal(message.failure))
+			.finally(() => form.reset());
 		});
 	}
 
