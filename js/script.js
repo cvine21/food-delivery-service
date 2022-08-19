@@ -202,7 +202,7 @@ window.addEventListener('DOMContentLoaded', function () {
 	//                                   Form                                     //
 	// ************************************************************************** //
 
-	/*Отправка данных, введнных пользователем в форме*/
+	/*Отправка данных, введнных пользователем в форме, на json-server*/
 
 	const forms = document.querySelectorAll('form');
 
@@ -214,6 +214,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 	forms.forEach(item => bindPostData(item));
 
+	/* Отправить данные на JSON сервер. */
 	const postData = async (url, data) => {
 		const res = await fetch(url, {
 			method: 'POST',
@@ -224,7 +225,7 @@ window.addEventListener('DOMContentLoaded', function () {
 		return await res.json();
 	}
 
-	/* Отправить POST-запрос */
+	/* Привязять данные к запросу на сервер */
 	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
@@ -240,13 +241,10 @@ window.addEventListener('DOMContentLoaded', function () {
 			/* Собрать данные с формы в формате FormData*/
 			const formData = new FormData(form);
 
-			/* Сконвертировать данные из FormData в JSON */
+			/* Сконвертировать данные из FormData в JSON строку */
 			const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-			/*
-			Отправить данные на сервер.
-			Вывести соответвсующее сообщение статуса запроса и очистить форму в любом случае.
-			*/
+			/*Отправить запрос, вывести соответвсующее сообщение статуса запроса и очистить форму в любом случае.*/
 			postData('http://localhost:3000/requests', json)
 				.then(data => {
 					console.log(data);
