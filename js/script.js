@@ -384,16 +384,18 @@ function switchSlide() {
 	dots[slideIndex - 1].style.opacity = 1;
 }
 
+const deleteNotDigits = (str) => +str.replace(/\D/g, '');
+
 /* Переключить слайд на следующую по нажатию стрелки вправо */
 next.addEventListener('click', () => {
 	slideIndex++;
 	if (slideIndex > slides.length)
 		slideIndex = 1;
 
-	if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+	if (offset == deleteNotDigits(width) * (slides.length - 1)) {
 		offset = 0;
 	} else {
-		offset += +width.slice(0, width.length - 2);
+		offset += deleteNotDigits(width);
 	}
 
 	switchSlide();
@@ -406,9 +408,9 @@ prev.addEventListener('click', () => {
 		slideIndex = slides.length;
 
 	if (offset == 0) {
-		offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+		offset = deleteNotDigits(width) * (slides.length - 1);
 	} else {
-		offset -= +width.slice(0, width.length - 2);
+		offset -= deleteNotDigits(width);
 	}
 
 	switchSlide();
@@ -420,7 +422,7 @@ dots.forEach(dot => {
 		const slideTo = e.target.getAttribute('data-slide-to');
 
 		slideIndex = slideTo;
-		offset = +width.slice(0, width.length - 2) * (slideIndex - 1)
+		offset = deleteNotDigits(width) * (slideIndex - 1)
 
 		switchSlide();
 	})
