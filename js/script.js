@@ -176,6 +176,7 @@ window.addEventListener('DOMContentLoaded', function () {
 			this.price *= this.transfer;
 		}
 
+		/* Отрендерить карточку */
 		render() {
 			const element = document.createElement('div');
 			if (this.classes.length === 0) {
@@ -198,14 +199,14 @@ window.addEventListener('DOMContentLoaded', function () {
 		}
 	}
 
-	/* Отрендерить данные полученные с сервера */
+	/* Отрендерить данные карточек, полученные с сервера */
 	getResource('http://localhost:3000/menu')
-	.then(data => {
-		data.forEach(({img, altimg, title, descr, price}) => {
-			new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-		})
-	});
-	
+		.then(data => {
+			data.forEach(({ img, altimg, title, descr, price }) => {
+				new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+			})
+		});
+
 	// ************************************************************************** //
 	//                                   Form                                     //
 	// ************************************************************************** //
@@ -235,14 +236,14 @@ window.addEventListener('DOMContentLoaded', function () {
 
 	/* Получить данные с сервера */
 	async function getResource(url) {
-        let res = await fetch(url);
-    
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-        }
-    
-        return await res.json();
-    }
+		let res = await fetch(url);
+
+		if (!res.ok) {
+			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+		}
+
+		return await res.json();
+	}
 
 	/* Привязять данные к запросу на сервер */
 	function bindPostData(form) {
@@ -306,6 +307,7 @@ let offset = 0;
 let slideIndex = 1;
 
 const slides = document.querySelectorAll('.offer__slide'),
+	slider = document.querySelector('.offer__slider'),
 	prev = document.querySelector('.offer__slider-prev'),
 	next = document.querySelector('.offer__slider-next'),
 	total = document.querySelector('#total'),
@@ -314,9 +316,11 @@ const slides = document.querySelectorAll('.offer__slide'),
 	slidesField = document.querySelector('.offer__slider-inner'),
 	width = window.getComputedStyle(slidesWrapper).width;
 
+/* Проинициализировать начальные цифры над картинкой */
 current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
 total.innerText = (slides.length < 10) ? `0${slides.length}` : slides.length;
 
+/* Картинки будут располагаться в ряд flex, overflow: hidden, и смещаться относительно поля */
 slidesField.style.width = 100 * slides.length + '%';
 slidesField.style.display = 'flex';
 slidesField.style.transition = '0.5s all';
@@ -327,32 +331,97 @@ slides.forEach(slide => {
 	slide.style.width = width;
 });
 
-next.addEventListener('click', () => {
-	if (offset == -width.slice(0, width.length - 2) * (slides.length - 1)) {
-		offset = 0;
-	} else {
-		offset -= +width.slice(0, width.length - 2);
-	}
-	slidesField.style.transform = `translateX(${offset}px)`;
+slider.style.position = 'relative';
 
+/* Создать список индикаторов */
+const indicators = document.createElement('ol'),
+	dots = [];
+indicators.classList.add('carousel-indicators');
+indicators.style.cssText = `
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 15;
+	display: flex;
+	justify-content: center;
+	margin-right: 15%;
+	margin-left: 15%;
+	list-style: none;`;
+slider.append(indicators);
+
+/* Отрендерить каждый интикатор */
+for (let i = 0; i < slides.length; ++i) {
+	const dot = document.createElement('li');
+	dot.setAttribute('data-slide-to', i + 1);
+	dot.style.cssText = `
+		box-sizing: content-box;
+		flex: 0 1 auto;
+		width: 30px;
+		height: 6px;
+		margin-right: 3px;
+		margin-left: 3px;
+		cursor: pointer;
+		background-color: #fff;
+		background-clip: padding-box;
+		border-top: 10px solid transparent;
+		border-bottom: 10px solid transparent;
+		opacity: .5;
+		transition: opacity .6s ease;
+	`;
+	if (i === 0)
+		dot.style.opacity = 1;
+
+	indicators.append(dot);
+	dots.push(dot);
+}
+
+/* Переключить слайд (обновить элементы слайда) */
+function switchSlide() {
+	current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
+	slidesField.style.transform = `translateX(-${offset}px)`;
+	dots.forEach(dot => dot.style.opacity = '.5');
+	dots[slideIndex - 1].style.opacity = 1;
+}
+
+/* Переключить слайд на следующую по нажатию стрелки вправо */
+next.addEventListener('click', () => {
 	slideIndex++;
 	if (slideIndex > slides.length)
 		slideIndex = 1;
 
-	current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
-})
-
-prev.addEventListener('click', () => {
-	if (offset == 0) {
-		offset = -width.slice(0, width.length - 2) * (slides.length - 1);
+	if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+		offset = 0;
 	} else {
 		offset += +width.slice(0, width.length - 2);
 	}
-	slidesField.style.transform = `translateX(${offset}px)`;
-	
+
+	switchSlide();
+})
+
+/* Переключить слайд на предыдущую по нажатию стрелки влево */
+prev.addEventListener('click', () => {
 	slideIndex--;
 	if (slideIndex < 1)
 		slideIndex = slides.length;
 
-	current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
+	if (offset == 0) {
+		offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+	} else {
+		offset -= +width.slice(0, width.length - 2);
+	}
+
+	switchSlide();
+})
+
+/* Переключить слайд при нажатии на индикаторы */
+dots.forEach(dot => {
+	dot.addEventListener('click', (e) => {
+		const slideTo = e.target.getAttribute('data-slide-to');
+
+		slideIndex = slideTo;
+		offset = +width.slice(0, width.length - 2) * (slideIndex - 1)
+
+		switchSlide();
+	})
 })
