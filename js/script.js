@@ -297,133 +297,242 @@ window.addEventListener('DOMContentLoaded', function () {
 			closeModal();
 		}, 4000);
 	}
-});
+	// ************************************************************************** //
+	//                                  Slider                                    //
+	// ************************************************************************** //
 
-// ************************************************************************** //
-//                                  Slider                                    //
-// ************************************************************************** //
+	let offset = 0;
+	let slideIndex = 1;
 
-let offset = 0;
-let slideIndex = 1;
+	const slides = document.querySelectorAll('.offer__slide'),
+		slider = document.querySelector('.offer__slider'),
+		prev = document.querySelector('.offer__slider-prev'),
+		next = document.querySelector('.offer__slider-next'),
+		total = document.querySelector('#total'),
+		current = document.querySelector('#current'),
+		slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+		slidesField = document.querySelector('.offer__slider-inner'),
+		width = window.getComputedStyle(slidesWrapper).width;
 
-const slides = document.querySelectorAll('.offer__slide'),
-	slider = document.querySelector('.offer__slider'),
-	prev = document.querySelector('.offer__slider-prev'),
-	next = document.querySelector('.offer__slider-next'),
-	total = document.querySelector('#total'),
-	current = document.querySelector('#current'),
-	slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-	slidesField = document.querySelector('.offer__slider-inner'),
-	width = window.getComputedStyle(slidesWrapper).width;
-
-/* Проинициализировать начальные цифры над картинкой */
-current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
-total.innerText = (slides.length < 10) ? `0${slides.length}` : slides.length;
-
-/* Картинки будут располагаться в ряд flex, overflow: hidden, и смещаться относительно поля */
-slidesField.style.width = 100 * slides.length + '%';
-slidesField.style.display = 'flex';
-slidesField.style.transition = '0.5s all';
-
-slidesWrapper.style.overflow = 'hidden';
-
-slides.forEach(slide => {
-	slide.style.width = width;
-});
-
-slider.style.position = 'relative';
-
-/* Создать список индикаторов */
-const indicators = document.createElement('ol'),
-	dots = [];
-indicators.classList.add('carousel-indicators');
-indicators.style.cssText = `
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: 15;
-	display: flex;
-	justify-content: center;
-	margin-right: 15%;
-	margin-left: 15%;
-	list-style: none;`;
-slider.append(indicators);
-
-/* Отрендерить каждый интикатор */
-for (let i = 0; i < slides.length; ++i) {
-	const dot = document.createElement('li');
-	dot.setAttribute('data-slide-to', i + 1);
-	dot.style.cssText = `
-		box-sizing: content-box;
-		flex: 0 1 auto;
-		width: 30px;
-		height: 6px;
-		margin-right: 3px;
-		margin-left: 3px;
-		cursor: pointer;
-		background-color: #fff;
-		background-clip: padding-box;
-		border-top: 10px solid transparent;
-		border-bottom: 10px solid transparent;
-		opacity: .5;
-		transition: opacity .6s ease;
-	`;
-	if (i === 0)
-		dot.style.opacity = 1;
-
-	indicators.append(dot);
-	dots.push(dot);
-}
-
-/* Переключить слайд (обновить элементы слайда) */
-function switchSlide() {
+	/* Проинициализировать начальные цифры над картинкой */
 	current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
-	slidesField.style.transform = `translateX(-${offset}px)`;
-	dots.forEach(dot => dot.style.opacity = '.5');
-	dots[slideIndex - 1].style.opacity = 1;
-}
+	total.innerText = (slides.length < 10) ? `0${slides.length}` : slides.length;
 
-const deleteNotDigits = (str) => +str.replace(/\D/g, '');
+	/* Картинки будут располагаться в ряд flex, overflow: hidden, и смещаться относительно поля */
+	slidesField.style.width = 100 * slides.length + '%';
+	slidesField.style.display = 'flex';
+	slidesField.style.transition = '0.5s all';
 
-/* Переключить слайд на следующую по нажатию стрелки вправо */
-next.addEventListener('click', () => {
-	slideIndex++;
-	if (slideIndex > slides.length)
-		slideIndex = 1;
+	slidesWrapper.style.overflow = 'hidden';
 
-	if (offset == deleteNotDigits(width) * (slides.length - 1)) {
-		offset = 0;
-	} else {
-		offset += deleteNotDigits(width);
+	slides.forEach(slide => {
+		slide.style.width = width;
+	});
+
+	slider.style.position = 'relative';
+
+	/* Создать список индикаторов */
+	const indicators = document.createElement('ol'),
+		dots = [];
+	indicators.classList.add('carousel-indicators');
+	indicators.style.cssText = `
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 15;
+		display: flex;
+		justify-content: center;
+		margin-right: 15%;
+		margin-left: 15%;
+		list-style: none;`;
+	slider.append(indicators);
+
+	/* Отрендерить каждый интикатор */
+	for (let i = 0; i < slides.length; ++i) {
+		const dot = document.createElement('li');
+		dot.setAttribute('data-slide-to', i + 1);
+		dot.style.cssText = `
+			box-sizing: content-box;
+			flex: 0 1 auto;
+			width: 30px;
+			height: 6px;
+			margin-right: 3px;
+			margin-left: 3px;
+			cursor: pointer;
+			background-color: #fff;
+			background-clip: padding-box;
+			border-top: 10px solid transparent;
+			border-bottom: 10px solid transparent;
+			opacity: .5;
+			transition: opacity .6s ease;
+		`;
+		if (i === 0)
+			dot.style.opacity = 1;
+
+		indicators.append(dot);
+		dots.push(dot);
 	}
 
-	switchSlide();
-})
-
-/* Переключить слайд на предыдущую по нажатию стрелки влево */
-prev.addEventListener('click', () => {
-	slideIndex--;
-	if (slideIndex < 1)
-		slideIndex = slides.length;
-
-	if (offset == 0) {
-		offset = deleteNotDigits(width) * (slides.length - 1);
-	} else {
-		offset -= deleteNotDigits(width);
+	/* Переключить слайд (обновить элементы слайда) */
+	function switchSlide() {
+		current.innerText = (slides.length < 10) ? `0${slideIndex}` : slideIndex;
+		slidesField.style.transform = `translateX(-${offset}px)`;
+		dots.forEach(dot => dot.style.opacity = '.5');
+		dots[slideIndex - 1].style.opacity = 1;
 	}
 
-	switchSlide();
-})
+	const deleteNotDigits = (str) => +str.replace(/\D/g, '');
 
-/* Переключить слайд при нажатии на индикаторы */
-dots.forEach(dot => {
-	dot.addEventListener('click', (e) => {
-		const slideTo = e.target.getAttribute('data-slide-to');
+	/* Переключить слайд на следующую по нажатию стрелки вправо */
+	next.addEventListener('click', () => {
+		slideIndex++;
+		if (slideIndex > slides.length)
+			slideIndex = 1;
 
-		slideIndex = slideTo;
-		offset = deleteNotDigits(width) * (slideIndex - 1)
+		if (offset == deleteNotDigits(width) * (slides.length - 1)) {
+			offset = 0;
+		} else {
+			offset += deleteNotDigits(width);
+		}
 
 		switchSlide();
 	})
-})
+
+	/* Переключить слайд на предыдущую по нажатию стрелки влево */
+	prev.addEventListener('click', () => {
+		slideIndex--;
+		if (slideIndex < 1)
+			slideIndex = slides.length;
+
+		if (offset == 0) {
+			offset = deleteNotDigits(width) * (slides.length - 1);
+		} else {
+			offset -= deleteNotDigits(width);
+		}
+
+		switchSlide();
+	})
+
+	/* Переключить слайд при нажатии на индикаторы */
+	dots.forEach(dot => {
+		dot.addEventListener('click', (e) => {
+			const slideTo = e.target.getAttribute('data-slide-to');
+
+			slideIndex = slideTo;
+			offset = deleteNotDigits(width) * (slideIndex - 1)
+
+			switchSlide();
+		})
+	})
+
+	// ************************************************************************** //
+	//                                Calculator                                  //
+	// ************************************************************************** //
+
+	const result = document.querySelector('.calculating__result span');
+
+	let weight, height, age, ratio, sex;
+
+	if (localStorage.getItem('sex')) {
+		sex = localStorage.getItem('sex');
+	} else {
+		sex = 'female';
+		localStorage.setItem('sex', 'female');
+	}
+
+	if (localStorage.getItem('ratio')) {
+		ratio = localStorage.getItem('ratio');
+	} else {
+		ratio = 1.375;
+		localStorage.setItem('ratio', 1.375);
+	}
+
+	function initLocalSettings(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
+
+		elements.forEach(element => {
+			element.classList.remove(activeClass);
+			if (element.getAttribute('id') === localStorage.getItem('sex'))
+				element.classList.add(activeClass);
+			if (element.getAttribute('data-ratio') === localStorage.getItem('ratio'))
+				element.classList.add(activeClass);
+		});
+	}
+
+	initLocalSettings('#gender div', 'calculating__choose-item_active');
+	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+
+	function calcTotal() {
+		if (!sex | !weight | !height | !age | !ratio) {
+			result.innerText = '____';
+			return;
+		}
+
+		if (sex === 'female') {
+			result.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+		} else {
+			result.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
+		}
+	}
+
+	calcTotal();
+
+	function getStaticInfo(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
+
+		elements.forEach((element, i) => {
+			element.addEventListener('click', (e) => {
+				if (e.target.getAttribute('data-ratio')) {
+					ratio = +e.target.getAttribute('data-ratio');
+					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
+				} else {
+					sex = (i === 1) ? sex = 'male' : 'female';
+					localStorage.setItem('sex', sex);
+				}
+
+				elements.forEach(element => {
+					element.classList.remove(activeClass);
+				});
+				e.target.classList.add(activeClass);
+
+
+				calcTotal();
+			});
+		});
+	}
+
+	getStaticInfo('#gender div', 'calculating__choose-item_active');
+	getStaticInfo('.calculating__choose_big div', 'calculating__choose-item_active');
+
+	function getDynamicInfo(selector) {
+		const input = document.querySelector(selector);
+		input.addEventListener('input', () => {
+			if (input.value.match(/\D/g)) {
+				input.style.border = '1px solid red';
+			} else {
+				input.style.border = 'none';
+			}
+			switch (input.getAttribute('id')) {
+				case 'height':
+					height = +input.value;
+					localStorage.setItem('height', height);
+					break;
+				case 'weight':
+					weight = +input.value;
+					localStorage.setItem('weight', weight);
+					break;
+				case 'age':
+					age = +input.value;
+					localStorage.setItem('age', age);
+					break;
+			}
+
+			calcTotal();
+		});
+	}
+
+	getDynamicInfo('#height');
+	getDynamicInfo('#weight');
+	getDynamicInfo('#age');
+});
