@@ -2,9 +2,7 @@
 //                                   Timer                                    //
 // ************************************************************************** //
 
-function timer() {
-	const deadline = '2022-09-06';
-
+function timer(id, deadline) {
 	/*  Получить объект, содержащий оставшееся время: общее, дни, часы, минуты, секунды */
 	function getTimeRemaining(endtime) {
 		const total = Date.parse(endtime) - Date.parse(new Date()),
@@ -48,7 +46,7 @@ function timer() {
 		}
 	}
 
-	setClock('.timer', deadline);
+	setClock(id, deadline);
 }
 
-module.exports = timer;
+export default timer;
