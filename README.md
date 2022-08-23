@@ -21,6 +21,16 @@ This is a food ration delivery service page that provides the main functions you
 ``` sh
 $> https://github.com/cvine21/food-ration.git && cd food-ration
 ```
+2. Install all the dependencies
 ``` sh
 $> npm install
 ```
+3. Run the webpack module bundler
+``` sh
+$> npx webpack
+```
+4. Run the JSON-server
+``` sh
+$> npx json-server db.json
+```
+5. Open `index.html` file in your favourite browser.
