@@ -33,4 +33,4 @@ $> npx webpack
 ``` sh
 $> npx json-server db.json
 ```
-5. Open `index.html` file in your favourite browser.
+5. Open the `index.html` page with your favourite browser or run a live or local server.
