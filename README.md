@@ -1,11 +1,6 @@
 #  :apple: Food Ration Delivery Service
 This is a food ration delivery service page that provides the main functions you'd expect from a site of this type, such as tabs, modal windows, slider, timer etc.
 
-
-## Table of contents
-- [Features](#features)
-- [Setup](#setup)
-
 ## Features
 - Modal window open/close
 - Tabs
