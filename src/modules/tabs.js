@@ -2,33 +2,40 @@
 //                                   Tabs                                     //
 // ************************************************************************** //
 
-function tabs(tabsSelector, tabsContentSelector, tabsParentSelector, activeClass) {
+function tabs(
+	tabsSelector,
+	tabsContentSelector,
+	tabsParentSelector,
+	activeClass
+) {
 	let tabs = document.querySelectorAll(tabsSelector),
 		tabsContent = document.querySelectorAll(tabsContentSelector),
 		tabsParent = document.querySelector(tabsParentSelector);
 
+	/* скрыть вкладки */
 	function hideTabContent() {
-
-		tabsContent.forEach(item => {
-			item.classList.add('hide');
-			item.classList.remove('show', 'fade');
+		tabsContent.forEach((item) => {
+			item.classList.add("hide");
+			item.classList.remove("show", "fade");
 		});
 
-		tabs.forEach(item => {
+		tabs.forEach((item) => {
 			item.classList.remove(activeClass);
 		});
 	}
 
+	/* отобразить вкладку */
 	function showTabContent(i = 0) {
-		tabsContent[i].classList.add('show', 'fade');
-		tabsContent[i].classList.remove('hide');
+		tabsContent[i].classList.add("show", "fade");
+		tabsContent[i].classList.remove("hide");
 		tabs[i].classList.add(activeClass);
 	}
 
 	hideTabContent();
 	showTabContent();
 
-	tabsParent.addEventListener('click', function (event) {
+	/* отобразить вкладку при нажатии на соотв. кнопку */
+	tabsParent.addEventListener("click", function (event) {
 		const target = event.target;
 		if (target && target.classList.contains(tabsSelector.slice(1))) {
 			tabs.forEach((item, i) => {

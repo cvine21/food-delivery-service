@@ -3,29 +3,29 @@
 // ************************************************************************** //
 
 function timer(id, deadline) {
-	/*  Получить объект, содержащий оставшееся время: общее, дни, часы, минуты, секунды */
+	/*  Получить объект, содержащий оставшееся время */
 	function getTimeRemaining(endtime) {
 		const total = Date.parse(endtime) - Date.parse(new Date()),
 			days = Math.floor(total / (1000 * 60 * 60 * 24)),
-			hours = Math.floor(total / (1000 * 60 * 60) % 24),
-			minutes = Math.floor(total / (1000 * 60) % 60),
-			seconds = Math.floor(total / 1000 % 60);
+			hours = Math.floor((total / (1000 * 60 * 60)) % 24),
+			minutes = Math.floor((total / (1000 * 60)) % 60),
+			seconds = Math.floor((total / 1000) % 60);
 
 		return { total, days, hours, minutes, seconds };
 	}
 
-	/* Доп. функция, чтобы  установить таймер в формате двузначного числа с 0 */
+	/* Установить таймер в формате двузначного числа с 0 */
 	function getZero(num) {
-		return (num >= 0 && num < 10) ? `0${num}` : num;
+		return num >= 0 && num < 10 ? `0${num}` : num;
 	}
 
 	/* Запустить таймер */
 	function setClock(selector, endtime) {
 		const timer = document.querySelector(selector),
-			days = timer.querySelector('#days'),
-			hours = timer.querySelector('#hours'),
-			minutes = timer.querySelector('#minutes'),
-			seconds = timer.querySelector('#seconds'),
+			days = timer.querySelector("#days"),
+			hours = timer.querySelector("#hours"),
+			minutes = timer.querySelector("#minutes"),
+			seconds = timer.querySelector("#seconds"),
 			timeInterval = setInterval(updateClock, 1000);
 
 		/* Чтобы не ждать 1000 мс при первом вызове setInterval вызываем updateClock заранее */

@@ -2,11 +2,19 @@
 //                              MenuCard Class                                //
 // ************************************************************************** //
 
-import { getResource } from '../services/services';
+import { getResource } from "../services/services";
 
 function cards() {
 	class MenuCard {
-		constructor(src, alt, title, descr, priceUSD, parentSelector, ...classes) {
+		constructor(
+			src,
+			alt,
+			title,
+			descr,
+			priceUSD,
+			parentSelector,
+			...classes
+		) {
 			this.src = src;
 			this.title = title;
 			this.title = title;
@@ -25,12 +33,14 @@ function cards() {
 
 		/* Отрендерить карточку */
 		render() {
-			const element = document.createElement('div');
+			const element = document.createElement("div");
 			if (this.classes.length === 0) {
-				this.classes = 'menu__item';
+				this.classes = "menu__item";
 				element.classList.add(this.classes);
 			} else {
-				this.classes.forEach(className => element.classList.add(className));
+				this.classes.forEach((className) =>
+					element.classList.add(className)
+				);
 			}
 			element.innerHTML = `
 					<img src=${this.src} alt=${this.alt}>
@@ -47,12 +57,18 @@ function cards() {
 	}
 
 	/* Отрендерить данные карточек, полученные с сервера */
-	getResource('http://localhost:3000/menu')
-		.then(data => {
-			data.forEach(({ img, altimg, title, descr, price }) => {
-				new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-			})
+	getResource("http://localhost:3000/menu").then((data) => {
+		data.forEach(({ img, altimg, title, descr, price }) => {
+			new MenuCard(
+				img,
+				altimg,
+				title,
+				descr,
+				price,
+				".menu .container"
+			).render();
 		});
+	});
 }
 
 export default cards;
