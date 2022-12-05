@@ -14,7 +14,7 @@ This is a food ration delivery service page that provides the main functions you
 ## Setup
 1. Clone this repo and go to the cloned folder.
 ``` sh
-$> https://github.com/cvine21/food-ration.git && cd food-ration
+$> git clone https://github.com/cvine21/food-ration.git && cd food-ration
 ```
 2. Install all the dependencies
 ``` sh
